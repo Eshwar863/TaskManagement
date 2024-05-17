@@ -1,8 +1,10 @@
 package com.TaskManagement.Controller;
 
+import com.TaskManagement.Dto.JwtAuthenticationResponse;
 import com.TaskManagement.Dto.LoginDto;
 import com.TaskManagement.Dto.UserDto;
 import com.TaskManagement.Entity.Users;
+import com.TaskManagement.Security.JwtTokenProvider;
 import com.TaskManagement.Service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,19 @@ public class AuthController {
     @Autowired
 UserService userService;
     @Autowired
+    JwtTokenProvider jwtTokenProvider;
+    @Autowired
     AuthenticationManager authenticationManager;
     @PostMapping("register")
     public ResponseEntity<UserDto> createuser(@RequestBody UserDto userdto){
         return new ResponseEntity<> (userService.createUser(userdto),HttpStatus.CREATED);
     }
     @PostMapping("login")
-    public ResponseEntity<String> userLogin(@RequestBody LoginDto loginDto){
+    public ResponseEntity<JwtAuthenticationResponse> userLogin(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(),loginDto.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    return new ResponseEntity<>("User Login SucessFully",HttpStatus.OK);}
+        String token = jwtTokenProvider.generateToken(authentication);
+    return  ResponseEntity.ok( new JwtAuthenticationResponse(token));}
 }
