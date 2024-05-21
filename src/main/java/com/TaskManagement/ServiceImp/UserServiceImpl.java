@@ -4,18 +4,15 @@ import com.TaskManagement.Dto.UserDto;
 import com.TaskManagement.Entity.Users;
 import com.TaskManagement.Repository.UserRepo;
 import com.TaskManagement.Service.UserService;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 @Autowired
     UserRepo userRepo;
-@Autowired
-    PasswordEncoder passwordEncoder;
+
 @Autowired
 private ModelMapper modelMapper;
 //    @Override public UserDto createUser(UserDto userDto) {
@@ -30,7 +27,7 @@ private ModelMapper modelMapper;
 //            and userdto data to user by using this methods defined below
     @Override
     public UserDto createUser(UserDto userDto) {
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+       // userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         Users users =  userRepo.save(userDtoToEntity(userDto));
         return EntityToUserDto(users);
     }
